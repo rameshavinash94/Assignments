@@ -1,0 +1,42 @@
+#webServer_deploy.yml
+---
+ - hosts: webServers
+   become: yes
+   user: nsp
+   tasks:
+    - name: Stop nginx
+      service:
+        name: nginx
+        state: stopped
+
+    - name: Delete site.conf.j2
+      file:
+       path: /etc/nginx/sites-enabled/webserver.com/site.conf.j2
+       state: absent
+
+    - name: Delete www directory
+      file:
+       path: /etc/nginx/sites-enabled/webserver.com
+       state: absent
+
+    - name: Delete index.html file
+      file:
+       path: /usr/share/nginx/html/index.html
+       state: absent
+
+    - name: Uninstall Nginx
+      apt:
+       name: nginx
+       state: absent
+
+    - name: Disabling all access to tcp port 8080
+      firewalld:
+       port: 8080/tcp
+       zone: public
+       state: disabled
+
+    - name: Restart firewall
+      service:
+       name: firewalld
+       state: restarted
+

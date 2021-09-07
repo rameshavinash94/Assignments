@@ -1,0 +1,11 @@
+- hosts: webServers
+  tasks:
+  - name: sync website
+    synchronize:
+      src: ./      
+      dest: /var/www/webserver.com
+      archive: no
+      checksum: yes
+      recursive: yes
+      delete: yes
+    become: no
